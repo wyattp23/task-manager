@@ -11,7 +11,15 @@ interface EditableDateProps {
 
 export default function EditableDate({ value, onSave }: EditableDateProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedValue, setEditedValue] = useState(value || "");
+
+  const formatDateForInput = (dateString?: string | null) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    date.setHours(12, 0, 0, 0);
+    return date.toISOString().slice(0, 16);
+  };
+
+  const [editedValue, setEditedValue] = useState(formatDateForInput(value));
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "";
@@ -19,7 +27,16 @@ export default function EditableDate({ value, onSave }: EditableDateProps) {
   };
 
   const handleSave = () => {
-    onSave(editedValue || null);
+    if (!editedValue) {
+      onSave(null);
+    } else {
+      const date = new Date(editedValue);
+      if (isNaN(date.getTime())) {
+        setEditedValue(formatDateForInput(value));
+      } else {
+        onSave(date.toISOString());
+      }
+    }
     setIsEditing(false);
   };
 
@@ -27,7 +44,7 @@ export default function EditableDate({ value, onSave }: EditableDateProps) {
     if (e.key === "Enter") {
       handleSave();
     } else if (e.key === "Escape") {
-      setEditedValue(value || "");
+      setEditedValue(formatDateForInput(value));
       setIsEditing(false);
     }
   };
@@ -35,9 +52,15 @@ export default function EditableDate({ value, onSave }: EditableDateProps) {
   if (isEditing) {
     return (
       <Input
-        type="datetime-local"
-        value={editedValue}
-        onChange={(e) => setEditedValue(e.target.value)}
+        type="date"
+        value={editedValue.split("T")[0]}
+        onChange={(e) => {
+          if (e.target.value) {
+            setEditedValue(`${e.target.value}T12:00`);
+          } else {
+            setEditedValue("");
+          }
+        }}
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         className="h-6 px-1 py-0 text-xs"
