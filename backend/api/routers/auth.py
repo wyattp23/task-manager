@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Annotated
 import os
-from api.dependencies import db_dependency, hash_password, verify_password
+from api.dependencies import db_dependency, get_current_user, hash_password, verify_password
 from api.models import User
 
 load_dotenv()
@@ -61,3 +61,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     token_expires = timedelta(minutes=20)
     token = create_access_token(user.email, user.id, token_expires)
     return {"access_token": token, "token_type": "bearer"}
+
+@router.get("/verify")
+async def verify_token(current_user = Depends(get_current_user)):
+    return current_user
