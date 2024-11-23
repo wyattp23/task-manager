@@ -2,15 +2,7 @@ import { Task, TaskStatus } from "../types/task";
 import EditableField from "./EditableField";
 import EditableDate from "./EditableDate";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { MoreVertical } from "lucide-react";
+import { TaskCardMenu } from "./TaskCardMenu";
 
 interface TaskCardProps {
   task: Task;
@@ -25,8 +17,10 @@ export function TaskCard({
   onUpdateTask,
   onDeleteTask,
 }: TaskCardProps) {
-  const handleUpdateField = (field: keyof Task, value: any) => {
-    console.log(field, value);
+  const handleUpdateField = <K extends keyof Task>(
+    field: K,
+    value: Task[K]
+  ) => {
     onUpdateTask({
       ...task,
       [field]: value,
@@ -46,42 +40,17 @@ export function TaskCard({
                 placeholder="Enter task title"
               />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {Object.values(TaskStatus).map((status) => (
-                  <DropdownMenuItem
-                    key={status}
-                    onClick={() => onUpdateTask(task.id, { ...task, status })}
-                    disabled={task.status === status}
-                  >
-                    <span
-                      className={`h-2 w-2 rounded-full mr-2 ${statusConfigs[status].color}`}
-                    />
-                    Move to {statusConfigs[status].label}
-                  </DropdownMenuItem>
-                ))}
-                <Separator className="my-2" />
-                <DropdownMenuItem
-                  className="text-red-600"
-                  onClick={() => onDeleteTask(task.id)}
-                >
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="min-h-[1.5rem] break-words whitespace-pre-wrap">
-            <EditableField
-              value={task.description || ""}
-              onSave={(value) => handleUpdateField("description", value)}
-              placeholder="Add description..."
+            <TaskCardMenu
+              task={task}
+              statusConfigs={statusConfigs}
+              onStatusChange={(status) => handleUpdateField("status", status)}
+              onDelete={() => onDeleteTask(task.id)}
             />
           </div>
+          <TaskDescription
+            description={task.description}
+            onUpdate={(value) => handleUpdateField("description", value)}
+          />
           <div className="flex justify-end gap-4 text-xs">
             <EditableDate
               value={task.due_date}
@@ -91,5 +60,23 @@ export function TaskCard({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function TaskDescription({
+  description,
+  onUpdate,
+}: {
+  description?: string;
+  onUpdate: (value: string) => void;
+}) {
+  return (
+    <div className="min-h-[1.5rem] break-words whitespace-pre-wrap">
+      <EditableField
+        value={description || ""}
+        onSave={onUpdate}
+        placeholder="Add description..."
+      />
+    </div>
   );
 }
