@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://localhost:8000
+  #     - NEXTAUTH_SECRET=g2jjHTPcXIycMueM7VI9T6hM2Pqw0g5cGjQ40Z1QOPA=
+  #   depends_on:
+  #     - backend
+  backend:
+    build: ./backend
+    container_name: fastapi_app
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/taskmanager
+      - CORS_ORIGINS=http://localhost:3000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: wyatt_task_manager_postgres_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=taskmanager
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  test:
+    build: ./backend
+    command: pytest tests/ -v
+    volumes:
+      - ./backend:/code
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/taskmanager
+    depends_on:
+      - db
+volumes:
+  postgres_data:
