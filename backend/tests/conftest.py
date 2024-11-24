@@ -7,10 +7,7 @@ from api.main import app
 from api.dependencies import get_db
 import os
 
-SQLALCHEMY_DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@db:5432/taskmanager"
-)
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Calendar, Pencil } from "lucide-react";
 
 interface EditableDateProps {
-  value?: string | null;
-  onSave: (value: string | null) => void;
+  value?: string;
+  onSave: (value: string | undefined) => void;
 }
 
 export default function EditableDate({ value, onSave }: EditableDateProps) {
@@ -28,7 +28,7 @@ export default function EditableDate({ value, onSave }: EditableDateProps) {
 
   function handleSave() {
     if (!editedValue) {
-      onSave(null);
+      onSave(undefined);
     } else {
       const date = new Date(editedValue);
       if (isNaN(date.getTime())) {

@@ -9,13 +9,6 @@ interface EditableFieldProps {
   placeholder?: string;
 }
 
-interface EditableFieldProps {
-  value: string;
-  onSave: (value: string) => void;
-  isTitle?: boolean;
-  placeholder?: string;
-}
-
 export default function EditableField({
   value,
   onSave,

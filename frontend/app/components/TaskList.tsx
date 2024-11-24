@@ -1,5 +1,3 @@
-"use client";
-
 import { Task, TaskStatus } from "../types/task";
 
 interface TaskListProps {

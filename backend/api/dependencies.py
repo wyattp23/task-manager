@@ -11,9 +11,8 @@ from argon2.exceptions import VerifyMismatchError
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("AUTH_SECRET_KEY", "")
-ALGORITHM = os.getenv("AUTH_ALGORITHM", "HS256")
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
+ALGORITHM = os.getenv("AUTH_ALGORITHM")
 
 if not SECRET_KEY:
     raise ValueError("AUTH_SECRET_KEY must be set in environment variables")
