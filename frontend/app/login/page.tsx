@@ -16,6 +16,22 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+function getAuthErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    // Handle specific error messages from the backend
+    if (error.message.includes("401")) {
+      return "Invalid email or password";
+    }
+    if (error.message.includes("404")) {
+      return "Account not found";
+    }
+    if (error.message.includes("network")) {
+      return "Unable to connect to the server. Please check your internet connection.";
+    }
+  }
+  return "An unexpected error occurred. Please try again.";
+}
+
 export default function Login() {
   const { login } = useAuthContext();
   const [email, setEmail] = useState("");
@@ -25,29 +41,36 @@ export default function Login() {
   const [registerName, setRegisterName] = useState("");
   const [loginError, setLoginError] = useState("");
   const [registerError, setRegisterError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoginError("");
+    setIsLoading(true);
     try {
       await login(email, password);
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to sign in";
-      setLoginError(errorMessage);
+      setLoginError(getAuthErrorMessage(error));
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setRegisterError("");
+    setIsLoading(true);
     try {
       await AuthService.register(registerEmail, registerPassword, registerName);
       await login(registerEmail, registerPassword);
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to create account";
-      setRegisterError(errorMessage);
+      if (error instanceof Error && error.message.includes("409")) {
+        setRegisterError("An account with this email already exists");
+      } else {
+        setRegisterError(getAuthErrorMessage(error));
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -77,6 +100,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -87,10 +111,11 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Sign in
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
                 {loginError && (
                   <Alert variant="destructive">
@@ -132,8 +157,8 @@ export default function Login() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Create Account
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
                 {registerError && (
                   <Alert variant="destructive">

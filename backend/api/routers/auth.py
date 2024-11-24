@@ -8,6 +8,7 @@ from typing import Annotated
 import os
 from api.dependencies import db_dependency, get_current_user, hash_password, verify_password
 from api.models import User
+from sqlalchemy.exc import IntegrityError
 
 load_dotenv()
 
@@ -43,15 +44,29 @@ def create_access_token(email: str, user_id: int, expires_delta: timedelta):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(create_user_request: UserCreateRequest, db: db_dependency):
-    create_data = create_user_request.model_dump()
-    create_data.pop('password')
-    user_model = User(
-        **create_data,
-        password=hash_password(create_user_request.password)
-    )
-    db.add(user_model)
-    db.commit()
-    return {"message": "User created successfully"}
+    existing_user = db.query(User).filter(User.email == create_user_request.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An account with this email already exists"
+        )
+    
+    try:
+        create_data = create_user_request.model_dump()
+        create_data.pop('password')
+        user_model = User(
+            **create_data,
+            password=hash_password(create_user_request.password)
+        )
+        db.add(user_model)
+        db.commit()
+        return {"message": "User created successfully"}
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to create user"
+        )
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
