@@ -33,6 +33,17 @@ async def create_task(
     db: db_dependency,
     current_user: user_dependency
 ):
+    """
+    Create a new task.
+    
+    Parameters:
+        task_create: Task data
+        db: Database session
+        current_user: Authenticated user
+        
+    Returns:
+        Task: Created task object
+    """
     db_task = Task(
         user_id=current_user["id"],
         title=task_create.title,
@@ -51,6 +62,16 @@ async def get_tasks(
     db: db_dependency,
     current_user: user_dependency
 ):
+    """
+    Get all tasks for the authenticated user.
+    
+    Parameters:
+        db: Database session
+        current_user: Authenticated user
+        
+    Returns:
+        List[Task]: List of tasks
+    """
     tasks = db.query(Task).filter(
         Task.user_id == current_user["id"]
     ).order_by(Task.created_at.desc()).all()
@@ -63,6 +84,14 @@ async def delete_task(
     db: db_dependency,
     current_user: user_dependency
 ):
+    """
+    Delete a task by ID for the authenticated user.
+    
+    Parameters:
+        task_id: Task ID
+        db: Database session
+        current_user: Authenticated user
+    """
     task = db.query(Task).filter(
         Task.id == task_id,
         Task.user_id == current_user["id"]
@@ -85,6 +114,15 @@ async def update_task(
     db: db_dependency,
     current_user: user_dependency
 ):
+    """
+    Update a task by ID for the authenticated user.
+    
+    Parameters:
+        task_id: Task ID
+        task_update: Task data
+        db: Database session
+        current_user: Authenticated user
+    """
     task = db.query(Task).filter(
         Task.id == task_id,
         Task.user_id == current_user["id"]
