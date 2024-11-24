@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import axios from "axios";
 import { TaskStatus } from "../types/task";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TaskService } from "@/lib/services/tasks";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -49,12 +49,7 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
 
   const onSubmit = async (data: TaskFormData) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tasks/`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await TaskService.createTask(data);
       reset();
       onTaskCreated();
     } catch (error) {

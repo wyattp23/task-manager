@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useAuthContext from "../context/AuthContext";
-import axios from "axios";
+import { AuthService } from "@/lib/services/auth";
 import {
   Card,
   CardContent,
@@ -40,11 +40,7 @@ export default function Login() {
     e.preventDefault();
     setRegisterError("");
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/`, {
-        email: registerEmail,
-        password: registerPassword,
-        name: registerName,
-      });
+      await AuthService.register(registerEmail, registerPassword, registerName);
       await login(registerEmail, registerPassword);
     } catch (error: any) {
       setRegisterError(

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { AuthService } from "@/lib/services/auth";
 
 interface UserAuthResponse {
   email: string;
@@ -27,15 +27,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      axios
-        .get(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      AuthService.verifyToken(token)
         .then((response) => {
           setUser({
-            ...response.data,
+            ...response,
             access_token: token,
           });
         })
@@ -53,28 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const formData = new FormData();
-      formData.append("username", email);
-      formData.append("password", password);
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/token`,
-        formData
-      );
-      const { access_token } = response.data;
-
-      const userResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/verify`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
+      const { access_token } = await AuthService.login(email, password);
+      const userResponse = await AuthService.verifyToken(access_token);
 
       localStorage.setItem("token", access_token);
       setUser({
-        ...userResponse.data,
+        ...userResponse,
         access_token,
       });
       router.push("/");

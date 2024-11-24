@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TaskForm from "./components/TaskForm";
 import TaskBoard from "./components/TaskBoard";
 import { Task } from "./types/task";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { TaskService } from "@/lib/services/tasks";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -16,16 +16,8 @@ export default function Home() {
 
   const fetchTasks = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/tasks/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setTasks(response.data);
+      const tasksData = await TaskService.getAllTasks();
+      setTasks(tasksData);
     } catch (error) {
       setError("Failed to fetch tasks");
     }
@@ -33,16 +25,7 @@ export default function Home() {
 
   const handleUpdateTask = async (updatedTask: Task) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${updatedTask.id}`,
-        updatedTask,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await TaskService.updateTask(updatedTask.id, updatedTask);
       await fetchTasks();
     } catch (error) {
       setError("Failed to update task");
@@ -51,12 +34,7 @@ export default function Home() {
 
   const handleDeleteTask = async (taskId: number) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await TaskService.deleteTask(taskId);
       await fetchTasks();
     } catch (error) {
       setError("Failed to delete task");
