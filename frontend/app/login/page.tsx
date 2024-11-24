@@ -31,8 +31,10 @@ export default function Login() {
     setLoginError("");
     try {
       await login(email, password);
-    } catch (error: any) {
-      setLoginError(error.message || "Failed to sign in");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to sign in";
+      setLoginError(errorMessage);
     }
   }
 
@@ -42,10 +44,10 @@ export default function Login() {
     try {
       await AuthService.register(registerEmail, registerPassword, registerName);
       await login(registerEmail, registerPassword);
-    } catch (error: any) {
-      setRegisterError(
-        error.response?.data?.detail || "Failed to create account"
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create account";
+      setRegisterError(errorMessage);
     }
   }
 

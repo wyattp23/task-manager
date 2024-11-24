@@ -17,15 +17,12 @@ export function TaskCard({
   onUpdateTask,
   onDeleteTask,
 }: TaskCardProps) {
-  const handleUpdateField = <K extends keyof Task>(
-    field: K,
-    value: Task[K]
-  ) => {
+  function handleUpdateField<K extends keyof Task>(field: K, value: Task[K]) {
     onUpdateTask({
       ...task,
       [field]: value,
     });
-  };
+  }
 
   return (
     <Card className="bg-white shadow-sm">
