@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router]);
 
-  const login = async (email: string, password: string) => {
+  async function login(email: string, password: string) {
     try {
       const { access_token } = await AuthService.login(email, password);
       const userResponse = await AuthService.verifyToken(access_token);
@@ -60,13 +60,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       throw error;
     }
-  };
+  }
 
-  const logout = () => {
+  function logout() {
     localStorage.removeItem("token");
     setUser(null);
     router.push("/login");
-  };
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading }}>

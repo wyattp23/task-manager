@@ -25,21 +25,21 @@ export default function EditableField({
   const [isEditing, setIsEditing] = useState(false);
   const [editedValue, setEditedValue] = useState(value);
 
-  const handleSave = () => {
+  function handleSave() {
     if (editedValue.trim() !== value) {
       onSave(editedValue.trim());
     }
     setIsEditing(false);
-  };
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       handleSave();
     } else if (e.key === "Escape") {
       setEditedValue(value);
       setIsEditing(false);
     }
-  };
+  }
 
   if (isEditing) {
     return (

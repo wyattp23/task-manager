@@ -26,13 +26,12 @@ const statusDisplayMap: Record<TaskStatus, string> = {
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
+  description: z.string(),
   status: z.nativeEnum(TaskStatus),
   due_date: z
     .string()
-    .transform((str) => (str === "" ? null : str))
-    .optional()
-    .nullable(),
+    .transform((str) => (str === "" ? undefined : str))
+    .optional(),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
@@ -53,11 +52,11 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
       title: "",
       description: "",
       status: TaskStatus.TODO,
-      due_date: null,
+      due_date: undefined,
     },
   });
 
-  const onSubmit = async (data: TaskFormData) => {
+  async function onSubmit(data: TaskFormData) {
     try {
       await TaskService.createTask(data);
       reset();
@@ -65,7 +64,7 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
     } catch (error) {
       console.error("Error creating task:", error);
     }
-  };
+  }
 
   return (
     <Card>

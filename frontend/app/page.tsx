@@ -16,7 +16,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const fetchTasks = async () => {
+  async function fetchTasks() {
     try {
       const tasksData = await TaskService.getAllTasks();
       setTasks(tasksData);
@@ -24,9 +24,9 @@ export default function Home() {
       console.error("Error fetching tasks:", error);
       setError("Failed to fetch tasks");
     }
-  };
+  }
 
-  const handleUpdateTask = async (updatedTask: Task) => {
+  async function handleUpdateTask(updatedTask: Task) {
     try {
       await TaskService.updateTask(updatedTask.id, updatedTask);
       await fetchTasks();
@@ -34,9 +34,9 @@ export default function Home() {
       console.error("Error updating task:", error);
       setError("Failed to update task");
     }
-  };
+  }
 
-  const handleDeleteTask = async (taskId: number) => {
+  async function handleDeleteTask(taskId: number) {
     try {
       await TaskService.deleteTask(taskId);
       await fetchTasks();
@@ -44,7 +44,7 @@ export default function Home() {
       console.error("Error deleting task:", error);
       setError("Failed to delete task");
     }
-  };
+  }
 
   useEffect(() => {
     fetchTasks();

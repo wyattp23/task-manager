@@ -26,7 +26,7 @@ export default function Login() {
   const [loginError, setLoginError] = useState("");
   const [registerError, setRegisterError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoginError("");
     try {
@@ -34,9 +34,9 @@ export default function Login() {
     } catch (error: any) {
       setLoginError(error.message || "Failed to sign in");
     }
-  };
+  }
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setRegisterError("");
     try {
@@ -47,7 +47,7 @@ export default function Login() {
         error.response?.data?.detail || "Failed to create account"
       );
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

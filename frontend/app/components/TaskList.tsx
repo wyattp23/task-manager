@@ -7,7 +7,7 @@ interface TaskListProps {
 }
 
 export default function TaskList({ tasks }: TaskListProps) {
-  const getStatusColor = (status: TaskStatus) => {
+  function getStatusColor(status: TaskStatus) {
     switch (status) {
       case TaskStatus.TODO:
         return "bg-yellow-100 text-yellow-800";
@@ -16,7 +16,7 @@ export default function TaskList({ tasks }: TaskListProps) {
       case TaskStatus.DONE:
         return "bg-green-100 text-green-800";
     }
-  };
+  }
 
   return (
     <div className="space-y-4">

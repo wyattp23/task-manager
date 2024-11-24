@@ -12,21 +12,21 @@ interface EditableDateProps {
 export default function EditableDate({ value, onSave }: EditableDateProps) {
   const [isEditing, setIsEditing] = useState(false);
 
-  const formatDateForInput = (dateString?: string | null) => {
+  function formatDateForInput(dateString?: string | null) {
     if (!dateString) return "";
     const date = new Date(dateString);
     date.setHours(12, 0, 0, 0);
     return date.toISOString().slice(0, 16);
-  };
+  }
 
   const [editedValue, setEditedValue] = useState(formatDateForInput(value));
 
-  const formatDate = (dateString?: string | null) => {
+  function formatDate(dateString?: string | null) {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString();
-  };
+  }
 
-  const handleSave = () => {
+  function handleSave() {
     if (!editedValue) {
       onSave(null);
     } else {
@@ -38,16 +38,16 @@ export default function EditableDate({ value, onSave }: EditableDateProps) {
       }
     }
     setIsEditing(false);
-  };
+  }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       handleSave();
     } else if (e.key === "Escape") {
       setEditedValue(formatDateForInput(value));
       setIsEditing(false);
     }
-  };
+  }
 
   if (isEditing) {
     return (
