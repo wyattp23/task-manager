@@ -18,11 +18,11 @@ export function TaskColumn({
   onDeleteTask,
 }: TaskColumnProps) {
   return (
-    <Card className="max-h-[600px] flex flex-col">
-      <CardHeader>
+    <Card className="h-[600px] flex flex-col">
+      <CardHeader className="flex-shrink-0">
         <CardTitle className="text-lg font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 overflow-y-auto flex-1">
+      <CardContent className="space-y-4 overflow-y-auto flex-1 min-h-0">
         {tasks.map((task) => (
           <TaskCard
             key={task.id}

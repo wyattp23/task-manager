@@ -18,6 +18,12 @@ import {
 } from "@/components/ui/select";
 import { TaskService } from "@/lib/services/tasks";
 
+const statusDisplayMap: Record<TaskStatus, string> = {
+  [TaskStatus.TODO]: "To Do",
+  [TaskStatus.IN_PROGRESS]: "In Progress",
+  [TaskStatus.DONE]: "Done",
+};
+
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
@@ -101,9 +107,9 @@ export default function TaskForm({ onTaskCreated }: TaskFormProps) {
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(TaskStatus).map((status) => (
+                {Object.entries(statusDisplayMap).map(([status, display]) => (
                   <SelectItem key={status} value={status}>
-                    {status}
+                    {display}
                   </SelectItem>
                 ))}
               </SelectContent>

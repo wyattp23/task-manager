@@ -6,10 +6,12 @@ import TaskForm from "./components/TaskForm";
 import TaskBoard from "./components/TaskBoard";
 import { Task } from "./types/task";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, LogOut } from "lucide-react";
 import { TaskService } from "@/lib/services/tasks";
+import useAuthContext from "./context/AuthContext";
 
 export default function Home() {
+  const { logout } = useAuthContext();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -19,6 +21,7 @@ export default function Home() {
       const tasksData = await TaskService.getAllTasks();
       setTasks(tasksData);
     } catch (error) {
+      console.error("Error fetching tasks:", error);
       setError("Failed to fetch tasks");
     }
   };
@@ -28,6 +31,7 @@ export default function Home() {
       await TaskService.updateTask(updatedTask.id, updatedTask);
       await fetchTasks();
     } catch (error) {
+      console.error("Error updating task:", error);
       setError("Failed to update task");
     }
   };
@@ -37,6 +41,7 @@ export default function Home() {
       await TaskService.deleteTask(taskId);
       await fetchTasks();
     } catch (error) {
+      console.error("Error deleting task:", error);
       setError("Failed to delete task");
     }
   };
@@ -50,10 +55,19 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Task Manager</h1>
-          <Button onClick={() => setIsFormOpen(!isFormOpen)} className="gap-2">
-            <PlusCircle className="h-5 w-5" />
-            {isFormOpen ? "Close" : "New Task"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setIsFormOpen(!isFormOpen)}
+              className="gap-2"
+            >
+              <PlusCircle className="h-5 w-5" />
+              {isFormOpen ? "Close" : "New Task"}
+            </Button>
+            <Button variant="outline" onClick={logout} className="gap-2">
+              <LogOut className="h-5 w-5" />
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         <div
