@@ -22,7 +22,7 @@ const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   status: z.nativeEnum(TaskStatus),
-  due_date: z.string().nullable(),
+  due_date: z.string().optional().nullable(),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
