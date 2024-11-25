@@ -11,7 +11,7 @@ Task manager app implemented with Next.js and FastAPI
 
 1. Clone the repository:
 
-2. Create a `.env` file in the project /frontend and /backend with the values found in the respective `.env.tpl` files to run the services locally.
+2. Create a `.env` file in the project root with the values found in the `.env.tpl` file to run the services locally.
 
 3. Build and start the services:
 
