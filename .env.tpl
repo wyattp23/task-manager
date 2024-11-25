@@ -1,6 +1,8 @@
 AUTH_SECRET_KEY=secret
 AUTH_ALGORITHM=HS256
 
+ALLOWED_ORIGINS=http://localhost:3000,https://production-domain.com
+
 TASK_SERVICE_URL=http://localhost:8000
 TASK_SERVICE_PORT=8000
 
