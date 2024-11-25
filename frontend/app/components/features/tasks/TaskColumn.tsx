@@ -1,26 +1,46 @@
-import { Task, TaskStatus } from "../types/task";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Task, TaskStatus } from "@/app/types/task";
 import { TaskCard } from "./TaskCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const statusConfigs = {
+  [TaskStatus.TODO]: {
+    label: "To Do",
+    color: "bg-yellow-500",
+  },
+  [TaskStatus.IN_PROGRESS]: {
+    label: "In Progress",
+    color: "bg-blue-500",
+  },
+  [TaskStatus.DONE]: {
+    label: "Done",
+    color: "bg-green-500",
+  },
+} as const;
 
 interface TaskColumnProps {
-  title: string;
+  status: TaskStatus;
   tasks: Task[];
-  statusConfigs: Record<TaskStatus, { label: string; color: string }>;
   onUpdateTask: (updatedTask: Task) => void;
   onDeleteTask: (taskId: number) => void;
 }
 
 export function TaskColumn({
-  title,
+  status,
   tasks,
-  statusConfigs,
   onUpdateTask,
   onDeleteTask,
 }: TaskColumnProps) {
   return (
     <Card className="h-[600px] flex flex-col">
       <CardHeader className="flex-shrink-0">
-        <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          {statusConfigs[status].label}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 overflow-y-auto flex-1 min-h-0">
         {tasks.map((task) => (

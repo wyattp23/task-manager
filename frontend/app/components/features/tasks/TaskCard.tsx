@@ -1,8 +1,9 @@
-import { Task, TaskStatus } from "../types/task";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { TaskStatus } from "@/app/types/task";
+import { Task } from "@/app/types/task";
 import EditableField from "./EditableField";
-import EditableDate from "./EditableDate";
-import { Card, CardContent } from "@/components/ui/card";
 import { TaskCardMenu } from "./TaskCardMenu";
+import EditableDate from "./EditableDate";
 
 interface TaskCardProps {
   task: Task;

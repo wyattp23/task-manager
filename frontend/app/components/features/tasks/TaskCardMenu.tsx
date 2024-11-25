@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+} from "@/app/components/ui/dropdown-menu";
+import { Separator } from "@/app/components/ui/separator";
 import { MoreVertical } from "lucide-react";
-import { Task, TaskStatus } from "../types/task";
+import { Task, TaskStatus } from "../../../types/task";
 
 interface TaskCardMenuProps {
   task: Task;

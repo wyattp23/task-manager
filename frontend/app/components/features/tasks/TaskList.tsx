@@ -1,4 +1,4 @@
-import { Task, TaskStatus } from "../types/task";
+import { Task, TaskStatus } from "../../../types/task";
 
 interface TaskListProps {
   tasks: Task[];

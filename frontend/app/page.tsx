@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProtectedRoute from "./components/ProtectedRoute";
-import TaskForm from "./components/TaskForm";
-import TaskBoard from "./components/TaskBoard";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
+import TaskForm from "./components/features/tasks/TaskForm";
+import TaskBoard from "./components/features/tasks/TaskBoard";
 import { Task } from "./types/task";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, LogOut } from "lucide-react";
 import { TaskService } from "@/lib/services/tasks";
 import useAuthContext from "./context/AuthContext";
-import LoadingSpinner from "./components/LoadingSpinner";
+import LoadingSpinner from "./components/shared/LoadingSpinner";
+import TaskHeaderActions from "./components/features/tasks/TaskHeaderActions";
 
 export default function Home() {
   const { logout, isLoading: isAuthLoading, user } = useAuthContext();
@@ -37,7 +36,26 @@ export default function Home() {
     }
   }, [user]);
 
-  // Only show loading spinner during initial auth check
+  async function handleUpdateTask(updatedTask: Task) {
+    try {
+      await TaskService.updateTask(updatedTask.id, updatedTask);
+      await fetchTasks();
+    } catch (error) {
+      console.error("Error updating task:", error);
+      setError("Failed to update task");
+    }
+  }
+
+  async function handleDeleteTask(taskId: number) {
+    try {
+      await TaskService.deleteTask(taskId);
+      await fetchTasks();
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      setError("Failed to delete task");
+    }
+  }
+
   if (isAuthLoading) {
     return <LoadingSpinner />;
   }
@@ -47,16 +65,11 @@ export default function Home() {
       <main className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Task Manager</h1>
-          <div className="flex gap-2">
-            <Button onClick={() => setIsFormOpen(true)} className="gap-2">
-              <PlusCircle className="h-4 w-4" />
-              Add Task
-            </Button>
-            <Button variant="outline" onClick={logout} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
-          </div>
+          <TaskHeaderActions
+            isFormOpen={isFormOpen}
+            onToggleForm={() => setIsFormOpen(!isFormOpen)}
+            onLogout={logout}
+          />
         </div>
 
         {error && <div className="mb-4 text-red-500">{error}</div>}
@@ -72,27 +85,15 @@ export default function Home() {
           </div>
         )}
 
-        <TaskBoard
-          tasks={tasks}
-          onUpdateTask={async (updatedTask) => {
-            try {
-              await TaskService.updateTask(updatedTask.id, updatedTask);
-              await fetchTasks();
-            } catch (error) {
-              console.error("Error updating task:", error);
-              setError("Failed to update task");
-            }
-          }}
-          onDeleteTask={async (taskId) => {
-            try {
-              await TaskService.deleteTask(taskId);
-              await fetchTasks();
-            } catch (error) {
-              console.error("Error deleting task:", error);
-              setError("Failed to delete task");
-            }
-          }}
-        />
+        {isLoadingTasks ? (
+          <LoadingSpinner />
+        ) : (
+          <TaskBoard
+            tasks={tasks}
+            onUpdateTask={handleUpdateTask}
+            onDeleteTask={handleDeleteTask}
+          />
+        )}
       </main>
     </ProtectedRoute>
   );

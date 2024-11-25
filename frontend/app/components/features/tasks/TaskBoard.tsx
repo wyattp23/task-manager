@@ -1,22 +1,8 @@
 "use client";
 
-import { Task, TaskStatus } from "../types/task";
+import { Task } from "@/app/types/task";
+import { TaskStatus } from "@/app/types/task";
 import { TaskColumn } from "./TaskColumn";
-
-const statusConfigs = {
-  [TaskStatus.TODO]: {
-    label: "To Do",
-    color: "bg-yellow-500",
-  },
-  [TaskStatus.IN_PROGRESS]: {
-    label: "In Progress",
-    color: "bg-blue-500",
-  },
-  [TaskStatus.DONE]: {
-    label: "Done",
-    color: "bg-green-500",
-  },
-} as const;
 
 interface TaskBoardProps {
   tasks: Task[];
@@ -34,9 +20,8 @@ export default function TaskBoard({
       {Object.values(TaskStatus).map((status) => (
         <TaskColumn
           key={status}
-          title={statusConfigs[status].label}
+          status={status}
           tasks={tasks.filter((task) => task.status === status)}
-          statusConfigs={statusConfigs}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
         />

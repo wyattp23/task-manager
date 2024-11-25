@@ -1,7 +1,7 @@
 # Environment variables
 .env
 .env.local
-.env.*.local
+!.env.local.tpl
 
 # Python
 __pycache__/
