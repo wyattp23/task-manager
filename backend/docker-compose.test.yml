@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres_db_test
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -9,7 +9,7 @@ services:
     ports:
       - "${DATABASE_PORT_TEST}:${DATABASE_PORT_TEST}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_test:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -17,14 +17,14 @@ services:
       retries: 5
 
   test:
-    build: ./backend
+    build: .
     command: poetry run pytest tests/ -v
     volumes:
-      - ./backend:/code
+      - .:/code
     environment:
       - DATABASE_URL_TEST=${DATABASE_URL_TEST}
     depends_on:
       - db
 
 volumes:
-  postgres_data:
+  postgres_data_test:

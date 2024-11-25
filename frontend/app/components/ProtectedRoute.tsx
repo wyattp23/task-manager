@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuthContext from "../context/AuthContext";
-import LoadingSpinner from "./LoadingSpinner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuthContext();
@@ -11,15 +10,15 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [user, isLoading, router]);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
+  if (!user) {
+    return null;
   }
 
-  return user ? children : null;
+  return children;
 }
 
 export default ProtectedRoute;
